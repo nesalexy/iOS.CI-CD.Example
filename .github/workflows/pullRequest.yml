@@ -43,7 +43,8 @@ jobs:
             Build/Build/Products
           key: ${{ runner.os }}-deps-v1-${{ hashFiles('BILDsolid.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
           restore-keys: ${{ runner.os }}-deps-v1-
-
+    
+      #https://github.com/futureware-tech/simulator-action/wiki
       - name: Launch Simulator
         uses: futureware-tech/simulator-action@v3
         with:
