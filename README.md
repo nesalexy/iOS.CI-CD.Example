@@ -79,7 +79,10 @@ team_name "#{ENV["TEAM_NAME"]}"
 team_id "#{ENV["TEAM_ID"]}"
 ```
 Update the `'Gemfile'` to specify the version of Fastlane used in the project:
-
+```ruby
+source 'https://rubygems.org'
+gem 'fastlane', '>= 2.221.0'
+```
 ### 2. Configuring Fastlane Match
 
 Match is the implementation of the codesigning.guide concept. Match creates all required **certificates** & **provisioning profiles** and **store**s them in a separate **git repository**, **Google Cloud**, or **Amazon S3**.
