@@ -3,9 +3,10 @@
 A simple example of CI/CD for iOS. The example is basic and is made only to show how you can automate the **launch of unit tests** and sending build to **Test Flight** every time you **commit** to the **main** branch. 
 The CI/CD of the project is built on [GitHub Actions](https://github.com/features/actions) and [Fastlane](https://fastlane.tools/).
 
-**Recomendations**:
-1. For more convenient work with files in the project, I recommend using [Visual Studio Code](https://code.visualstudio.com/).
-2. For CI/CD, it is advisable to create a **new account** for **github** and a new account for **appstore**.
+> [!TIP]
+> For more convenient work with files in the project, I recommend using [Visual Studio Code](https://code.visualstudio.com/).
+>
+> For CI/CD, it is advisable to create a **new account** for **github** and a new account for **appstore**.
 
 ### What is CI/CD?
 
@@ -25,36 +26,37 @@ GitHub Actions provides create custom workflows that automate various tasks, suc
 
 Fastlane can be installed in various other ways. For installation **alternatives**, consult the [official Fastlane documentation](https://docs.fastlane.tools/).
 
-```sh
+```ruby
 brew install fastlane
 ```
 
 After installation, **navigate** to the **iOS folder** of your project and initialize Fastlane:
 
-```sh
+```ruby
 fastlane init
 ```
 
 During the initialization process, when asked about how you want to configure Fastlane, choose **'Manual setup'**.
 Upon completion, the initial structure of Fastlane will be created with the following files:
 
-```sh
+```
 ├── fastlane
   ├── Appfile
   └── Fastfile
 └── Gemfile
 ```
-**P.S. for more convenient work with files in the project, I recommend using [Visual Studio Code](https://code.visualstudio.com/)**.
+> [!TIP]
+> For more convenient work with files in the project, I recommend using [Visual Studio Code](https://code.visualstudio.com/).
 
-`Gemfile` - used by Bundler to manage **Ruby dependencies.**
-`Appfile` - contains **global settings** for your app.
-`Fastfile` - defines the **'lanes**' that automate **specific tasks**.
+- `Gemfile` - used by Bundler to manage **Ruby dependencies.**
+- `Appfile` - contains **global settings** for your app.
+- `Fastfile` - defines the **'lanes**' that automate **specific tasks**.
 
 Let's create a file of **constants**. Then we can replace them ["Using secrets in GitHub Actions"](https://docs.github.com/ru/actions/security-guides/using-secrets-in-github-actions).
 
 Create a new file named `.env.default` in "fastlane" folder. You should have something like this:
 
-```sh
+```
 ├── fastlane
   ├── Appfile
   ├── .env.default
@@ -62,14 +64,14 @@ Create a new file named `.env.default` in "fastlane" folder. You should have som
 └── Gemfile
 ```
 and add new value to the `env.default`
-```
+```ruby
 APP_IDENTIFIER="nesterchuk.oleksii.CiCdExample"  # The bundle identifier of your app
 APPLE_ID="nesalexy@gmail.com" # Your Apple email address
 TEAM_NAME="My team name" # Appstore Team Name
 TEAM_ID="L4******3D" # Appstore Team ID
 ```
 Edit the `'Appfile'` to configure the bundle of your application:
-```
+```ruby
 app_identifier "#{ENV["APP_IDENTIFIER"]}"
 apple_id "#{ENV["APPLE_ID"]}"
 
@@ -88,11 +90,11 @@ Match is the implementation of the codesigning.guide concept. Match creates all 
 1. Create a new app in [appstoreconnect]( https://appstoreconnect.apple.com/) with your app ID. For current project **nesterchuk.oleksii.CiCdExample**
 2. **Сreate a separate git repository** where **certificates** & **provisioning profiles** will be stored. 
 3. For **Match** to interact with the **GitHub repository**, you will need a **'Personal Access Token'**. [Here's how to create this token](https://docs.github.com/ru/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic). After **creating the token**, convert it to **Base64** and copy the result as follows: 
-```
+```ruby
 echo -n 'your_github_username:your_personal_access_token' | base64 | pbcopy
 ```
 Add the **generated** key to `env.default`. It goes something like this
-```
+```ruby
 MATCH_GIT_BASIC_AUTHORIZATION="bmVzY***eHk6Z2hwX3N0WWWZMV******KOFp0T2ZYVzZhV0d**********jFPTGh6aA=="
 ```
 
@@ -100,7 +102,7 @@ MATCH_GIT_BASIC_AUTHORIZATION="bmVzY***eHk6Z2hwX3N0WWWZMV******KOFp0T2ZYVzZhV0d*
 
 Make sure you are in the **root folder** of the project and write the command:
 
-```
+```ruby
 fastlane match init
 ```
 
@@ -110,7 +112,7 @@ https://github.com/iOS-CI-CD-Example/secrets.git
 ```
 
 `'Matchfile'` will be created in the `'fastlane'` folder
-```sh
+```
 ├── fastlane
   ├── Appfile
   ├── .env.default
@@ -130,12 +132,12 @@ Remember to create a password for the keychain when prompted and **keep it in a 
 Check the 'secrets' repository to see if the certificates have been successfully created.
 
 Add the **Your match keychain** key to `env.default`. It goes something like this
-```
+```ruby
 MATCH_PASSWORD="cn123321"
 ```
 
 **Toward the end of step "2. Configuring Fastlane Match"**, your **Matchfile** should look something like this
-```
+```ruby
 git_url("https://github.com/iOS-CI-CD-Example/secrets.git")
 storage_mode("git")
 type("appstore") # The default type, can be: appstore, adhoc, enterprise or development
@@ -143,7 +145,7 @@ app_identifier(["#{ENV["APP_IDENTIFIER"]}"])
 username "#{ENV["APPLE_ID"]}"
 ```
 Your **env.default** should look something like this
-```
+```ruby
 APP_IDENTIFIER="nesterchuk.oleksii.CiCdExample"  # The bundle identifier of your app
 APPLE_ID="nesalexy@gmail.com" # Your Apple email address
 TEAM_NAME="My team name" # Appstore Team Name
@@ -161,7 +163,7 @@ To be able to **run unit tests** and send the build to the **Test Flight**, we n
 2. Navigate to **'Users and Access'**.
 3. Select the **'Keys'** tab and click on **'Generate API Key'**.
 4. Download the **AuthKey_W********.p8** key and put to **fastlane folder**
-```sh
+```
 ├── fastlane
   ├── Appfile
   ├── AuthKey_W********A.p8
@@ -172,20 +174,20 @@ To be able to **run unit tests** and send the build to the **Test Flight**, we n
 ```
 
 We need to modify file **env.default** and add constants.
-```
+```ruby
 APP_STORE_API_PRIVATE_KEY="W********A"
 APP_STORE_API_KEY_ISSUER_ID="caXXXX8d-XXXX-44ce-XXXX-63b7XXXX063a"
 APP_AUTH_KEY_FILEPATH="./Fastlane/AuthKey_$APP_STORE_API_PRIVATE_KEY.p8"
 APP_STORE_CONNECT_DURATION=1200
 ```
 add additional constants
-```
+```ruby
 APP_XCODEPROJ="nesterchuk.oleksii.CiCdExample.xcodeproj"
 APP_STORE_CONNECT_DURATION=1200
 APP_SCHEME="nesterchuk.oleksii.CiCdExample"
 ```
 Modify `Fastfile` and add the code
-```
+```ruby
 fastlane_version '2.221.0'
 default_platform :ios
 
@@ -245,11 +247,11 @@ To prepare the automation of our app launch process for **TestFlight**, we perfo
 ### 5. Testing 
 
 To continue, we need to test if everything is set up correctly. To do this, let's test locally. Make sure you are in the root folder of the ios project and run unit test 
-```
+```ruby
 fastlane tests
 ```
 If all went well, try submitting the build locally to Test Flight
-```
+```ruby
 fastlane test_flight
 ```
 
@@ -260,7 +262,7 @@ Before next step, we need add
 2. `.ruby-version` to root folder
 3. a new folder `.github` -> add a new folder `workflows` -> pullRequest.yml
 
-```sh
+```
 ├──.github
   ├── workflows
     ├── pullRequest.yml
@@ -275,22 +277,22 @@ Before next step, we need add
 └──.ruby-version
 ```
 Add code to `.gitignore`
-```
+```ruby
 Build
 
 # fastlane
 Fastlane/report.xml
 Fastlane/test_output
 
-CI-CD.GithubActions.Example.app.dSYM.zip
-CI-CD.GithubActions.Example.ipa
+nesterchuk.oleksii.CiCdExample.app.dSYM.zip
+nesterchuk.oleksii.CiCdExample.ipa
 ```
 Add code to `.ruby-version`
-```
+```ruby
 3.3
 ```
 Add code to `pullRequest.yml`
-```
+```ruby
 name: Pull Request
 
 on:
