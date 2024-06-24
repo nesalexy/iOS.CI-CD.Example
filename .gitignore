@@ -1,0 +1,8 @@
+Build
+
+# fastlane
+Fastlane/report.xml
+Fastlane/test_output
+
+nesterchuk.oleksii.CiCdExample.app.dSYM.zip
+nesterchuk.oleksii.CiCdExample.ipa
